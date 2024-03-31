@@ -1,0 +1,55 @@
+---
+title: "Birthday Problem"
+author: "Yuri Antonelli"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Birthday Problem
+Given a set of *n* randomly chosen people, what is the probability that at least 2 share the same birthday?
+It can be shown that it's enough to have only 23 people for a probability of 50%
+
+### Analytical Solution
+Assuming that all years have 365 days and independence between birthdays:
+
+If \( n \geq 365 \), then \( P(\text{at least 2 have the same birthday}) = 1 \)
+
+If \( n < 365 \), then 
+\[ P(\text{no one has the same birthday}) = \frac{{365 \cdot 364 \cdot 363 \cdot \ldots \cdot (365 - n + 1)}}{{365^n}} \]
+
+Therefore, 
+\[ P(\text{at least 2 have the same birthday}) = 1 - P(\text{no one has the same birthday}) \]
+
+### Simulated Solution
+```{r}
+birthday <- function(n_sim, n_pop) {
+  
+  # 1) Store all the simulations in a matrix
+  store_matrix <- matrix(sample(1:365, n_sim * n_pop, replace = TRUE), nrow = n_pop, ncol = n_sim)
+  store_matrix <- apply(store_matrix, 2, sort)
+  
+  # 2) create a vector of length equal to the number of simulations,
+  #    to be filled with 1 and 0
+  counter <- numeric(n_sim)
+  
+  for (i in seq_along(counter)) {
+    # check each simulation with the next one, as we sorted before
+    if (anyDuplicated(store_matrix[, i])) {
+      counter[i] <- 1
+    }
+  }
+  
+  # 3) probability = sum of 1's / length(counter)
+  prob <- mean(counter)
+  prob
+}
+
+#---------------------------------------
+
+# Test
+n <- 2:80
+p <- sapply(n, function(x) birthday(10000, x))
+
+plot(n, p, type = "p", col = "blue", pch = 16, xlab = "Number of People", ylab = "Probability of Shared Birthday")
+title("Probability of Shared Birthday vs. Number of People")
+```

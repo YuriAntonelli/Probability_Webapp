@@ -1,0 +1,55 @@
+---
+title: "Newton-Pepys Problem"
+author: "Yuri Antonelli"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Newton-Pepys Problem
+Which of the following three propositions has the greatest chance of success?
+
+A. Six fair dice are tossed independently and at least one "6" appears.
+
+B. Twelve fair dice are tossed independently and at least two "6"s appear.
+
+C. Eighteen fair dice are tossed independently and at least three "6"s appear.
+
+### Analytical Solution
+1. The probability \(P(A)\) can be computed as \(1-P(A^c)\), which means one minus the probability that no 6 is tossed: \(1-(5/6)^6\).
+
+2. Using a similar approach, we compute \(P(B)\) by subtracting the probability of no 6s in 12 tosses and exactly 1 six: \(P(B)=1-(5/6)^{12}-(12*\binom{1}{1}(1/6)(5/6)^{11})\).
+
+3. Let's employ the binomial distribution to subtract the probability of 0, 1, or 2 successes: \(P(C)=1-\sum_{k=0}^{2}\binom{18}{k}(\frac{1}{6})^k (\frac{5}{6})^{18-k}\).
+
+After computations, the event A turns out to be the most likely with a probability around 66%.
+
+### Simulated Solution
+```{r}
+newton_pepys = function(n_sim=10000){
+  
+  # Create matrices for the experiments
+  six_dice <- matrix(sample(1:6, 6 * n_sim, replace = TRUE), nrow = 6, ncol = n_sim)
+  twelve_dice <- matrix(sample(1:6, 12 * n_sim, replace = TRUE), nrow = 12, ncol = n_sim)
+  eighteen_dice <- matrix(sample(1:6, 18 * n_sim, replace = TRUE), nrow = 18, ncol = n_sim)
+  
+  # Count occurrences of desired outcomes
+  counter_a <- colSums(six_dice == 6) >= 1
+  counter_b <- colSums(twelve_dice == 6) >= 2
+  counter_c <- colSums(eighteen_dice == 6) >= 3
+  
+  # Calculate percentages
+  first_result <- mean(counter_a)
+  second_result <- mean(counter_b)
+  third_result <- mean(counter_c)
+  
+  # Print results
+  cat("the percentage of one 6 in 6 dice is: ", first_result, "\n")
+  cat("the percentage of two 6's in 12 dice is: ", second_result, "\n")
+  cat("the percentage of three 6's in 18 dice is: ", third_result, "\n")
+}
+
+#-----------------------------------------------
+
+# Test
+newton_pepys()
+```
