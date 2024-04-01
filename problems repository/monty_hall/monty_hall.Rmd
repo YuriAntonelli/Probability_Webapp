@@ -1,0 +1,69 @@
+---
+title: "Monty Hall"
+author: "Yuri Antonelli"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Monty Hall
+Suppose you're on a game show, and you're given the choice of three doors: Behind one door is a car; behind the others, goats. You pick a door, say No. 1, and the host, who knows what's behind the doors, opens another door, say No. 3, which has a goat. He then says to you, "Do you want to pick door No. 2?" Is it to your advantage to switch your choice?
+
+### Analytical Solution
+There are several ways to think about this problem, some of which are quite intuitive. Let's show an analytical solution though.
+
+Using the *law of total probability*: 
+
+Let \( S \) denote the event of success (assuming switch) and \( D_j \) denote the event that door \( j \) has the car. 
+
+Let's assume we pick door 1. Then,
+
+\[
+\begin{align*}
+P(S) & = P(S|D_1)P(D_1) + P(S|D_2)P(D_2) + P(S|D_3)P(D_3) \\
+     & = 0 \times \frac{1}{3} + 1 \times \frac{1}{3} + 1 \times \frac{1}{3} \\
+     & = \frac{2}{3}
+\end{align*}
+\]
+
+This confirms that switching doors maximizes the probability of winning the car in this scenario.
+
+### Simulated Solution
+```{r}
+monty_hall = function(n_doors=3){
+  
+  # define variables
+  num_simulations = 10000
+  num_doors = n_doors
+  results_matrix = matrix(0, num_doors, num_simulations)
+  
+  # Simulate placing the car behind a random door for each simulation
+  for (i in 1:num_simulations){
+    car_index = sample(1:num_doors, size=1)
+    results_matrix[car_index, i] = 1
+  }
+  
+  # No switching strategy
+  success_no_switching = 0
+  
+  # Simulate picking a door without switching for each simulation
+  for (i in 1:num_simulations){
+    choice_index = sample(1:num_doors, size=1)
+    if (results_matrix[choice_index, i] == 1){
+      success_no_switching = success_no_switching + 1
+    }
+  }
+  
+  # Calculate success rates
+  keeping_success_rate = success_no_switching / num_simulations
+  switching_success_rate = 1 - keeping_success_rate
+  
+  # Output results
+  cat(paste("Success rate by keeping =", keeping_success_rate, "\n",
+            "Success rate by switching =", switching_success_rate))
+}
+
+#-----------------------------
+
+# Test
+monty_hall(3)
+```
