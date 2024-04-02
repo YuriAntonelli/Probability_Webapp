@@ -1,0 +1,59 @@
+---
+title: "St.Peteresburg paradox"
+author: "Yuri Antonelli"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Gambler's Ruin
+A casino offers a game of chance for a single player in which a fair coin is tossed at each stage. The initial stake begins at 2 dollars and is doubled every time tails appears. The first time heads appears, the game ends and the player wins whatever is the current stake. Thus the player wins 2 dollars if heads appears on the first toss, 4 dollars if tails appears on the first toss and heads on the second, 8 dollars if tails appears on the first two tosses and heads on the third, and so on. What would be a fair price to pay the casino for entering the game?
+
+### Analytical Solution
+The analytical solution is quite trivial. If we define a random variable \( Y = 2^k \), where \( k \) is the number of flips until the first head, we would need to find the expected value of this variable, where \( k \) has no upper bound.
+
+So:
+
+\[ E[Y] = \sum_{k=1}^{\infty} 2^k \cdot \frac{1}{2^k} = \sum_{k=1}^{\infty} 1 = \infty \]
+
+So, \( \infty \) would be the fair price to pay, but usually, nobody is willing to pay "that much"!
+
+
+### Simulated Solution
+In this case there is no "simulated solution", but it is possible to show 
+the impossibility of convergence even with a lot of observations
+```{r}
+st_petersburg <- function(n_sim) {
+  
+  x <- c(0, 1)
+  tosses_vector <- numeric(n_sim) # Initialize vector to store number of tosses
+  money_vector <- numeric(n_sim)  # Initialize vector to store money earned
+  
+  for (i in 1:n_sim) {
+    tosses <- 1  # Initialize number of tosses to 1
+    money <- 0   # Initialize money earned to 0
+    indicator <- 0  # Initialize indicator
+    
+    while (indicator == 0) {
+      indicator <- sample(x, 1)  # Flip the coin
+      money <- money + 2^tosses   # Update money earned
+      tosses <- tosses + 1        # Increment number of tosses
+    }
+    
+    tosses_vector[i] <- tosses    # Store number of tosses for this simulation
+    money_vector[i] <- money      # Store money earned for this simulation
+  }
+  
+  mean(money_vector)  # Calculate and return the average money earned
+}
+
+#--------------------------------
+
+# Test
+# Let's show how, even with several simulations at every try, there is no sign of convergence
+# Run the function multiple times and store the results
+num_simulations <- 1000
+results <- replicate(num_simulations, st_petersburg(n_sim = 1000))
+
+# show a summary of the results
+summary(results)
+```
