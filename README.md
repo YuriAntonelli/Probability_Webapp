@@ -1,4 +1,4 @@
-# Probability Problems WebApp
+# Probability WebApp
 
 ## Overview
 
