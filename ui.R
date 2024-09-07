@@ -1,5 +1,5 @@
 library(shiny)
-library(shinythemes)
+library(bslib)
 
 # Define the path to the problems directory
 problems_path <- "problems_repository/html_files/"
@@ -13,7 +13,8 @@ problem_choices <- setNames(paste0(problems_path, problem_files), gsub("_", " ",
 
 # Define UI
 ui <- fluidPage(
-  theme = shinytheme("flatly"),
+  theme = bs_theme(version = 4, bootswatch = "flatly"),
+  
   navbarPage(
     title = div(icon("calculator"), "Probability App"),
     
@@ -24,9 +25,8 @@ ui <- fluidPage(
         column(12,
                div(class = "main-panel", 
                    h2("Welcome to the Probability Problems App!"),
-                   p("This app showcases some of the most famous probability puzzles in history. Each puzzle is presented with an explanation and some thought-provoking scenarios."),
-                   p("Explore these puzzles to understand the fascinating world of probability and how these problems can defy common intuition."),
-                   p("To get started, select a problem from the 'Problems' tab. We hope you enjoy solving these interesting challenges!")
+                   p("This app features a collection of famous probability problems, each accompanied by both an analytical and simulated solution."),
+                   p("To begin, select a problem from the 'Problems' tab!")
                )
         )
       )
@@ -36,7 +36,7 @@ ui <- fluidPage(
     tabPanel(
       title = "Problems",
       fluidRow(
-        column(3, 
+        column(2, 
                div(class = "sidebar", 
                    h3("Choose a Problem:"),
                    selectInput(
@@ -47,9 +47,9 @@ ui <- fluidPage(
                    )
                )
         ),
-        column(9, 
+        column(10, 
                div(class = "main-panel", 
-                   uiOutput("markdown")
+                   uiOutput("markdown")  # This will render the selected problem
                )
         )
       )
