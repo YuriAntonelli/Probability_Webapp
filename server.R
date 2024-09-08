@@ -13,7 +13,7 @@ server <- function(input, output, session) {
     # Wrap content in a div and trigger MathJax if needed
     tagList(
       div(HTML(content)),
-      tags$script("MathJax.Hub.Queue(['Typeset', MathJax.Hub]);")  # Trigger MathJax if necessary
+      tags$script("MathJax.Hub.Queue(['Typeset', MathJax.Hub]);")  
     )
   })
 }

@@ -41,15 +41,15 @@ ui <- fluidPage(
                    h3("Choose a Problem:"),
                    selectInput(
                      inputId = "problem", 
-                     label = NULL,  # Removed redundant label, as h3 covers it
+                     label = NULL,  
                      choices = problem_choices,
-                     width = "100%"  # Full width dropdown
+                     width = "100%" 
                    )
                )
         ),
         column(10, 
                div(class = "main-panel", 
-                   uiOutput("markdown")  # This will render the selected problem
+                   uiOutput("markdown") 
                )
         )
       )
